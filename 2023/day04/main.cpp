@@ -4,16 +4,16 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <utility>
+#include <array>
+#include <numeric>
 
-int part1() {
+std::pair<int, std::vector<int>> part1() {
     std::ifstream input("input.txt", std::ifstream::in);
-    if (!input) {
-        std::cerr << "Can't open 'input.txt' file!\n";
-        return 1;
-    }
 
     int sum = 0;
     std::string line;
+    std::vector<int> cards_wins_vec; // Needed only for Part 1
 
     while(std::getline(input, line)) {
         std::string word;
@@ -51,13 +51,32 @@ int part1() {
                                                  my_numbers_vec.begin(), my_numbers_vec.end(),
                                                  my_numbers_vec.begin()) - my_numbers_vec.begin();
 
+        cards_wins_vec.emplace_back(number_of_wins); // Needed only for Part 2
         sum += static_cast<int>(std::pow(2, number_of_wins - 1));
     }
-    return sum;
+    return std::make_pair(sum, cards_wins_vec);
+}
+
+int part2(const std::vector<int>& cards_wins_vec) {
+    if(cards_wins_vec.empty())
+        return 1;
+
+    std::vector<int> cards_copies = std::vector<int>(cards_wins_vec.size(), 1);
+
+    for(int i = 0; i < cards_copies.size(); i++) {
+        for(int j = 0; j < cards_copies[i]; j++) {
+            int nbr_of_wins = cards_wins_vec[i];
+            for(int k = i + 1; k < i  + 1 + nbr_of_wins; k++) {
+                cards_copies[k]++;
+            }
+        }
+    }
+    return std::accumulate(cards_copies.begin(), cards_copies.end(), 0);
 }
 
 int main() {
-    std::cout << "The result of part 1: " << part1() << '\n';
+    std::cout << "The result of part 1: " << part1().first << '\n';
+    std::cout << "The result of part 2: " << part2(part1().second) << '\n';
 
     return 0;
 }
