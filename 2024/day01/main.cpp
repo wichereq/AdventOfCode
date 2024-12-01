@@ -28,6 +28,7 @@ int main() {
     right_list.sort();
 
     std::cout << "Part 1 solution: " << part01(left_list, right_list) << '\n';
+    std::cout << "Part 2 solution: " << part02(left_list, right_list) << '\n';
 
     return 0;
 }
